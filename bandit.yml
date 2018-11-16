@@ -1,0 +1,40 @@
+---
+0: cat readme
+1: cat ./-
+2: cat spaces\ in\ this\ filename
+3: cat inhere/.hidden
+4: >
+  file inhere/* |
+  sed -n 's/^\(.*\): ASCII text.*$/\1/p' |
+  xargs cat
+5: >
+  find . -type f ! -perm /111 -exec file {} \; |
+  sed -n 's/^\(.*\): ASCII text.*$/\1/p' |
+  xargs -d '\n' stat --printf='%s %n\n' |
+  sed -n 's/^1033 \(.*\)$/\1/p' |
+  xargs cat |
+  tr -d '[:blank:]'
+6: >
+  find / -group bandit6 -user bandit7 2>/dev/null |
+  xargs -d '\n' stat --printf='%s %n\n' |
+  sed -n 's/^33 \(.*\)$/\1/p' |
+  xargs cat
+7: grep millionth data.txt | awk '{print $2}'
+8: sort data.txt | uniq -c | awk '$1 == 1 {print $2}'
+9: strings data.txt | awk '$1 ~ /^=/ && length($2) == 32 { print $2 }'
+10: cat data.txt | base64 --decode | awk '{print $4}'
+11: cat data.txt | tr 'A-Za-z' 'N-ZA-Mn-za-m' | awk '{print $NF}'
+12: >
+  tempfolder=$(mktemp -d /tmp/temp.XXXXX);
+  tempfile=$(mktemp $tempfolder/file.XXXXX);
+  cp data.txt $tempfile;
+  chmod 0644 $tempfile;
+  cd $tempfolder;
+  cat $tempfile | xxd -r | gunzip | bunzip2 |
+  gunzip | tar -xO | tar -xO | bunzip2 |
+  tar -xO | gunzip | awk '{print $NF}'
+13: >
+  ssh -q -o StrictHostKeyChecking=no -i sshkey.private bandit14@localhost
+  "netcat localhost 30000 < /etc/bandit_pass/bandit14" |
+  awk 'NR==2'
+# 15: BfMYroe26WYalil77FoDi9qh59eK5xNr
